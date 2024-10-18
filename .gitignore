@@ -1,0 +1,4 @@
+**/__pycache__
+*.pth
+taming_transformers.egg-info
+logs
