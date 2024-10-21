@@ -38,13 +38,13 @@ class CustomTest(CustomBase):
 
 
 class CustomClasegTrain(CustomBase):
-    def __init__(self, siz, dataset_num, fold, dataset_name=None):
+    def __init__(self, size, dataset_num, fold, dataset_name=None):
         super().__init__()
         PREPROCESSED_ROOT = os.getenv('PREPROCESSED_ROOT', None)
         dataset_path = f"{PREPROCESSED_ROOT}/Dataset_"
         if dataset_name is not None:
             dataset_path += f"{dataset_name}_"
-        dataset_path += f"{dataset_num}/fold_{fold}/imagesTr/"
+        dataset_path += f"{dataset_num}/fold_{fold}/train/imagesTr/"
         files = os.listdir(dataset_path)
         self.data = NumpyPaths(paths=files, size=size, random_crop=False)
 
@@ -56,6 +56,6 @@ class CustomClasegTest(CustomBase):
         dataset_path = f"{PREPROCESSED_ROOT}/Dataset_"
         if dataset_name is not None:
             dataset_path += f"{dataset_name}_"
-        dataset_path += f"{dataset_num}/fold_{fold}/imagesVal/" 
+        dataset_path += f"{dataset_num}/fold_{fold}/val/imagesTr/" 
         files = os.listdir(dataset_path)
         self.data = NumpyPaths(paths=files, size=size, random_crop=False)
