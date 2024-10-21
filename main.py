@@ -174,7 +174,6 @@ class DataModuleFromConfig(pl.LightningDataModule):
         return DataLoader(self.datasets["test"], batch_size=self.batch_size,
                           num_workers=self.num_workers, collate_fn=custom_collate)
 
-
 class SetupCallback(Callback):
     def __init__(self, resume, now, logdir, ckptdir, cfgdir, config, lightning_config):
         super().__init__()

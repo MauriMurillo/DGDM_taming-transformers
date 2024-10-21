@@ -31,13 +31,17 @@ data:
     batch_size: 1
     num_workers: 8
     train:
-      target: taming.data.custom.CustomTrain
+      target: taming.data.custom.CustomClasegTrain
       params:
-        training_images_list_file: data/wheat_val.txt
         size: 256
+        dataset_num: 421
+        dataset_name: "large"
+        fold: 0 
     validation:
-      target: taming.data.custom.CustomTest
+      target: taming.data.custom.CustomClasegTest
       params:
-        test_images_list_file: data/wheat_val.txt
         size: 256
+        dataset_num: 421
+        dataset_name: "large"
+        fold: 0 
 
