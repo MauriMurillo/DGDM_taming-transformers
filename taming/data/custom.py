@@ -1,4 +1,5 @@
 import os
+import glob
 import numpy as np
 import albumentations
 from torch.utils.data import Dataset
@@ -45,7 +46,7 @@ class CustomClasegTrain(CustomBase):
         if dataset_name is not None:
             dataset_path += f"{dataset_name}_"
         dataset_path += f"{dataset_num}/fold_{fold}/train/imagesTr/"
-        files = os.listdir(dataset_path)
+        files = glob.glob(f"{dataset_path}/*")
         self.data = NumpyPaths(paths=files, size=size, random_crop=False)
 
 
@@ -57,5 +58,5 @@ class CustomClasegTest(CustomBase):
         if dataset_name is not None:
             dataset_path += f"{dataset_name}_"
         dataset_path += f"{dataset_num}/fold_{fold}/val/imagesTr/" 
-        files = os.listdir(dataset_path)
+        files = glob.glob(f"{dataset_path}/*")
         self.data = NumpyPaths(paths=files, size=size, random_crop=False)

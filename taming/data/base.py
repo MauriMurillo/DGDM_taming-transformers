@@ -61,10 +61,12 @@ class ImagePaths(Dataset):
 
 class NumpyPaths(ImagePaths):
     def preprocess_image(self, image_path):
-        image = np.load(image_path).squeeze(0)  # 3 x 1024 x 1024
+        image = np.load(image_path)
+        # print(image.shape)
+        # image = image.squeeze(0)  # 3 x 1024 x 1024
         image = np.transpose(image, (1,2,0))
-        image = Image.fromarray(image, mode="RGB")
-        image = np.array(image).astype(np.uint8)
+        # image = Image.fromarray(image, mode="RGB")
+        # image = np.array(image).astype(np.uint8)
         image = self.preprocessor(image=image)["image"]
-        image = (image/127.5 - 1.0).astype(np.float32)
+        # image = (image/127.5 - 1.0).astype(np.float32)
         return image

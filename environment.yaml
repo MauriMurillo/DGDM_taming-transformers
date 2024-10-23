@@ -1,13 +1,13 @@
-name: taming
+name: taming_old
 channels:
   - pytorch
   - defaults
 dependencies:
   - python=3.8.5
   - pip=20.3
-  - cudatoolkit=11.3
-  - pytorch=1.10.0
-  - torchvision=0.11.1
+  - cudatoolkit=10.2
+  - pytorch=1.7.0
+  - torchvision=0.8.1
   - numpy=1.19.2
   - pip:
     - albumentations==0.4.3
@@ -22,5 +22,4 @@ dependencies:
     - einops==0.3.0
     - more-itertools>=8.0.0
     - transformers==4.3.1
-    - pillow==9.50
     - -e .
