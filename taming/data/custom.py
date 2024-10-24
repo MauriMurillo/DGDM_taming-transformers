@@ -38,25 +38,3 @@ class CustomTest(CustomBase):
         self.data = ImagePaths(paths=paths, size=size, random_crop=False)
 
 
-class CustomClasegTrain(CustomBase):
-    def __init__(self, size, dataset_num, fold, dataset_name=None):
-        super().__init__()
-        PREPROCESSED_ROOT = os.getenv('PREPROCESSED_ROOT', None)
-        dataset_path = f"{PREPROCESSED_ROOT}/Dataset_"
-        if dataset_name is not None:
-            dataset_path += f"{dataset_name}_"
-        dataset_path += f"{dataset_num}/fold_{fold}/train/imagesTr/"
-        files = glob.glob(f"{dataset_path}/*")
-        self.data = NumpyPaths(paths=files, size=size, random_crop=False)
-
-
-class CustomClasegTest(CustomBase):
-    def __init__(self, size, dataset_num, fold, dataset_name=None):
-        super().__init__()
-        PREPROCESSED_ROOT = os.getenv('PREPROCESSED_ROOT', None)
-        dataset_path = f"{PREPROCESSED_ROOT}/Dataset_"
-        if dataset_name is not None:
-            dataset_path += f"{dataset_name}_"
-        dataset_path += f"{dataset_num}/fold_{fold}/val/imagesTr/" 
-        files = glob.glob(f"{dataset_path}/*")
-        self.data = NumpyPaths(paths=files, size=size, random_crop=False)
