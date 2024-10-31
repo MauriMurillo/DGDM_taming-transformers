@@ -195,12 +195,12 @@ class SetupCallback(Callback):
             print("Project config")
             print(self.config.pretty())
             OmegaConf.save(self.config,
-                           os.path.join(self.cfgdir, "{}-project.yaml".format(self.now)))
+                           os.path.join(self.cfgdir, "project.yaml"))
 
             print("Lightning config")
             print(self.lightning_config.pretty())
             OmegaConf.save(OmegaConf.create({"lightning": self.lightning_config}),
-                           os.path.join(self.cfgdir, "{}-lightning.yaml".format(self.now)))
+                           os.path.join(self.cfgdir, "lightning.yaml"))
 
         else:
             # ModelCheckpoint callback created log directory --- remove it
@@ -395,15 +395,15 @@ if __name__ == "__main__":
         nowname = _tmp[_tmp.index("logs")+1]
     else:
         if opt.name:
-            name = "_"+opt.name
+            name = opt.name
         elif opt.base:
             cfg_fname = os.path.split(opt.base[0])[-1]
             cfg_name = os.path.splitext(cfg_fname)[0]
-            name = "_"+cfg_name
+            name = cfg_name
         else:
             name = ""
-        nowname = name+opt.postfix
-        logdir = os.path.join("logs", nowname)
+        name = name+opt.postfix
+        logdir = os.path.join(os.getenv('AUTOENCODER'), name)
 
     ckptdir = os.path.join(logdir, "checkpoints")
     cfgdir = os.path.join(logdir, "configs")
@@ -446,10 +446,10 @@ if __name__ == "__main__":
             "wandb": {
                 "target": "pytorch_lightning.loggers.WandbLogger",
                 "params": {
-                    "name": nowname,
+                    "name": name,
                     "save_dir": logdir,
                     "offline": opt.debug,
-                    "id": nowname,
+                    "id": name,
                 }
             },
             "testtube": {

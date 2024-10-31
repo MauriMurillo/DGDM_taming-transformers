@@ -8,4 +8,4 @@
 source /home/mauricio.murillo/.bashrc
 conda activate taming_old
 cd /home/mauricio.murillo/DGDM_taming-transformers
-python main.py --base configs/classeg_vqgan_masks.yaml -n masks -t True --gpus 0, 
+python main.py --base configs/vqf8_highres_masks.yaml -n masks_vqf8_highres -t True --gpus 0,
