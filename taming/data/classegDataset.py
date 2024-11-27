@@ -19,6 +19,10 @@ class ClassegDataset(Dataset):
         if dataset_name is not None:
             self.data_root += f"{dataset_name}_"
         self.data_root += f"{dataset_num}/fold_{fold}/{split}/"
+
+        size = None if size is not None and size<=0 else size
+        self.size = size
+
         self.croppper = albumentations.CenterCrop(height=self.size, width=self.size)
 
         if mode in ["images", "concat"]:
@@ -30,6 +34,8 @@ class ClassegDataset(Dataset):
             self.label_rescaler = albumentations.SmallestMaxSize(max_size=self.size, interpolation=cv2.INTER_NEAREST)
             self.label_pre = albumentations.Compose([self.croppper, self.label_rescaler])
 
+        self._length = len(self.img_paths) if mode in ["images", "concat"] else len(self.label_paths)
+
     def __len__(self):
         return self._length
 
@@ -37,26 +43,27 @@ class ClassegDataset(Dataset):
         if self.mode == "labels":
             item = np.load(self.label_paths[i])
             item = {
-                "image":self.label_pre(item)
+                "image":self.preprocess_item(item, self.label_pre)
             }
         elif self.mode == "images":    
             item = np.load(self.img_paths[i])
             item = {
-                "image":self.img_pre(item)
+                "image":self.preprocess_item(item, self.img_pre)
             }
         elif self.mode == "concat":
             label = np.load(self.label_paths[i])
-            label = self.mask_pre(label)
+            label = self.preprocess_item(label, self.label_pre)
             img = np.load(self.img_paths[i])
-            img = self.mask_pre(img)
+            img = self.preprocess_item(img, self.img_pre)
             item = {
-                "image": np.concatenate([img, label])
+                "image": np.concatenate([img, label], axis=-1)
             }
+            print(item["image"].shape)
         return item
     
-    def preprocess_item(self, item):
+    def preprocess_item(self, item, preprocessor):
         item = np.transpose(item, (1,2,0))
-        item = self.preprocessor(image=item)["image"]
+        item = preprocessor(image=item)["image"]
         return item
 
 class ClassegTrain(ClassegDataset):
