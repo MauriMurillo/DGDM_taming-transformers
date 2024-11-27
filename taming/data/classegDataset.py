@@ -13,32 +13,45 @@ class ClassegDataset(Dataset):
         super().__init__()
         split = self.get_split()
         self.mode = mode
+
         PREPROCESSED_ROOT = os.getenv('PREPROCESSED_ROOT', None)
         self.data_root = f"{PREPROCESSED_ROOT}/Dataset_"
         if dataset_name is not None:
             self.data_root += f"{dataset_name}_"
-        self.data_root += f"{dataset_num}/fold_{fold}/{split}/{self.mode}Tr/"
-        self.file_paths = glob.glob(f"{self.data_root}/*")
-        self._length = len(self.file_paths)
+        self.data_root += f"{dataset_num}/fold_{fold}/{split}/"
+        self.croppper = albumentations.CenterCrop(height=self.size, width=self.size)
 
-        size = None if size is not None and size<=0 else size
-        self.size = size
-
-        if mode == "images":
-            self.rescaler = albumentations.SmallestMaxSize(max_size=self.size, interpolation=cv2.INTER_LINEAR)
-        else:
-            self.rescaler = albumentations.SmallestMaxSize(max_size=self.size, interpolation=cv2.INTER_NEAREST)
-        
-        self.preprocessor = albumentations.Compose([self.rescaler, albumentations.CenterCrop(height=self.size, width=self.size)])
+        if mode in ["images", "concat"]:
+            self.img_paths = glob.glob(f"{self.data_root}/imagesTr/*")
+            self.img_rescaler = albumentations.SmallestMaxSize(max_size=self.size, interpolation=cv2.INTER_LINEAR)
+            self.img_pre = albumentations.Compose([self.croppper, self.img_rescaler])
+        if mode in ["labels", "concat"]:
+            self.label_paths = glob.glob(f"{self.data_root}/labelsTr/*")    
+            self.label_rescaler = albumentations.SmallestMaxSize(max_size=self.size, interpolation=cv2.INTER_NEAREST)
+            self.label_pre = albumentations.Compose([self.croppper, self.label_rescaler])
 
     def __len__(self):
         return self._length
 
     def __getitem__(self, i):
-        item = np.load(self.file_paths[i])
-        item = {
-            "image":self.preprocess_item(item)
-        }
+        if self.mode == "labels":
+            item = np.load(self.label_paths[i])
+            item = {
+                "image":self.label_pre(item)
+            }
+        elif self.mode == "images":    
+            item = np.load(self.img_paths[i])
+            item = {
+                "image":self.img_pre(item)
+            }
+        elif self.mode == "concat":
+            label = np.load(self.label_paths[i])
+            label = self.mask_pre(label)
+            img = np.load(self.img_paths[i])
+            img = self.mask_pre(img)
+            item = {
+                "image": np.concatenate([img, label])
+            }
         return item
     
     def preprocess_item(self, item):
